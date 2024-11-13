@@ -7,7 +7,7 @@ api_mode = false
 api_access_token = "lucyisawesome"
 
 # Default URLs, used when no URL is provided in request, use "|" to separate multiple subscription links, supports local files/URL
-default_url = "https://fcsblka.fcsubcn.cc:2096/api/v1/client/subscribe?token=750b21449339ae09b2cce91fc5fe2e92|https://gitlab.com/lclalalalala/clash_subs/-/raw/main/clash_meta_client.yaml"
+default_url = []
 
 # Insert subscription links to requests. Can be used to add node(s) to all exported subscriptions.
 enable_insert = true
