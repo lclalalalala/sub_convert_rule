@@ -6,7 +6,7 @@
 
 文件地址：
 ```
-https://raw.githubusercontent.com/lclalalalala/sub_convert_rule/refs/heads/main/my_direct.list
+https://raw.githubusercontent.com/lclalalalala/sub_convert_rule/refs/heads/main/config_normal.ini
 ```
 ## 默认转换逻辑
 1. **是否直接链接：**
