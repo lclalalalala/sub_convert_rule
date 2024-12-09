@@ -14,15 +14,17 @@ https://raw.githubusercontent.com/lclalalalala/sub_convert_rule/refs/heads/main/
     - **私有代理：** 自动选择私有代理服务器。
 2. **其他未匹配的地址：**
     - 使用普通代理进行处理。
+*没有对apple、Google、microsoft等网站进行特殊处理。我认为没什么必要拆分过于详细的规则集。*
 
 ## 私有代理服务器说明
 
 私有代理服务器主要用于解决一些常见的网站（例如 Google）频繁触发 CAPTCHA 验证的问题。通过使用私有代理服务器，您可以有效减少同一 IP 的请求频率，从而降低触发 CAPTCHA 的可能性。
 
 
-## 文件说明
+## 规则集说明
+已经引用了 ACL4SSR 的规则集。自定义规则集优先级在引用规则之前，因此可以覆盖 ACL4SSR 的规则集。
 
-- `.list` 文件有三个类型：  
+- 自定义规则集说明：  
   1. **直连**：`my_direct.list`对应无需代理的规则集。
   2. **私有代理服务器**：`my_private_proxy.list`对应通过私有代理访问特定网站的规则集。
   3. **普通代理服务器**：`my_proxy.list`对应使用常规代理服务器的规则集。
