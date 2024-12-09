@@ -14,6 +14,8 @@ https://raw.githubusercontent.com/lclalalalala/sub_convert_rule/refs/heads/main/
     - **私有代理：** 自动选择私有代理服务器。
 2. **其他未匹配的地址：**
     - 使用普通代理进行处理。
+
+
 *没有对apple、Google、microsoft等网站进行特殊处理。我认为没什么必要拆分过于详细的规则集。*
 
 ## 私有代理服务器说明
