@@ -1,3 +1,5 @@
 DOMAIN-SUFFIX,tuna.tsinghua.edu.cn
 PROCESS-NAME,fdm.exe
 DOMAIN-SUFFIX,fnos.net
+PROCESS-NAME,qbittorrent
+PROCESS-NAME,qBittorrent
