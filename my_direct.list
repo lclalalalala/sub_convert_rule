@@ -3,4 +3,4 @@ PROCESS-NAME,fdm.exe
 DOMAIN-SUFFIX,fnos.net
 PROCESS-NAME,qbittorrent
 PROCESS-NAME,qBittorrent
-IP-CIDR,111.229.207.53,no-resolve
+IP-CIDR,111.229.207.53/32,no-resolve
