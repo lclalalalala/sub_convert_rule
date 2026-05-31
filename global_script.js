@@ -37,39 +37,40 @@ const groupBaseOption = {
     "disable-udp": false,
 };
 
-// 代理规则 - 简化为：直连规则保持直连，其他所有规则都指向"代理选择"
+// 代理规则 - 分为三组：确定被墙、确定国内、不确定
 const rules = [
     // 自定义规则
     ...customRules,
-    // 规则集
-    "RULE-SET,ipdirect,全局直连,no-resolve",
-    "RULE-SET,ipprivate,全局直连,no-resolve",
-    "RULE-SET,direct,全局直连",
-    "RULE-SET,private,全局直连",
-    "RULE-SET,bilibili,全局直连",
-    "RULE-SET,speedtest,全局直连",
-    // 以下所有规则都指向"代理选择"
-    "RULE-SET,telegramcidr,代理选择,no-resolve",
-    "RULE-SET,google,代理选择",
-    "RULE-SET,apple,代理选择",
-    "RULE-SET,bing,代理选择",
-    "RULE-SET,github,代理选择",
-    "RULE-SET,onedrive,代理选择",
-    "RULE-SET,microsoft,代理选择",
-    "RULE-SET,adobe,代理选择",
-    "RULE-SET,ai,代理选择",
-    "RULE-SET,youtube,代理选择",
-    "RULE-SET,netflix_ip,代理选择",
-    "RULE-SET,netflix_site,代理选择",
-    "RULE-SET,tiktok,代理选择",
-    "RULE-SET,pornhub,代理选择",
-    "RULE-SET,spotify,代理选择",
-    "RULE-SET,games,代理选择",
-    "RULE-SET,proxy,代理选择",
-    "RULE-SET,gfw,代理选择",
-    "RULE-SET,tld-not-cn,代理选择",
-    // 未匹配的规则也指向"代理选择"
-    "MATCH,代理选择",
+    // 确定国内直连
+    "RULE-SET,ipdirect,国内直连,no-resolve",
+    "RULE-SET,ipprivate,国内直连,no-resolve",
+    "RULE-SET,direct,国内直连",
+    "RULE-SET,private,国内直连",
+    "RULE-SET,bilibili,国内直连",
+    "RULE-SET,speedtest,国内直连",
+    // 确定被墙，需要代理
+    "RULE-SET,telegramcidr,必须代理,no-resolve",
+    "RULE-SET,google,必须代理",
+    "RULE-SET,youtube,必须代理",
+    "RULE-SET,ai,必须代理",
+    "RULE-SET,github,必须代理",
+    "RULE-SET,netflix_ip,必须代理",
+    "RULE-SET,netflix_site,必须代理",
+    "RULE-SET,tiktok,必须代理",
+    "RULE-SET,pornhub,必须代理",
+    "RULE-SET,proxy,必须代理",
+    "RULE-SET,gfw,必须代理",
+    "RULE-SET,tld-not-cn,必须代理",
+    // 不确定是否被墙
+    "RULE-SET,apple,漏网之鱼",
+    "RULE-SET,bing,漏网之鱼",
+    "RULE-SET,onedrive,漏网之鱼",
+    "RULE-SET,microsoft,漏网之鱼",
+    "RULE-SET,adobe,漏网之鱼",
+    "RULE-SET,spotify,漏网之鱼",
+    "RULE-SET,games,漏网之鱼",
+    // 未匹配的规则归入不确定
+    "MATCH,漏网之鱼",
 ];
 
 // 规则集配置
@@ -350,36 +351,36 @@ const regionConfig = [
     }
 ];
 
-// 显示节点配置 - 简化为统一的"代理选择"入口
+// 代理组配置 - 三组流量入口
 const proxyGroups = [
-    // 主入口：代理选择 - 所有需要代理的流量都走这里
+    // 确定被墙的流量
     {
         ...groupBaseOption,
-        name: "代理选择",
+        name: "必须代理",
         type: "select",
-        proxies: ["延迟选优", "故障转移", "手动选择", "负载均衡(轮询)", "负载均衡(散列)", "全局直连", "地区选择"],
+        proxies: ["自动选择", "地区选择", "故障转移", "手动选择", "DIRECT"],
     },
-    // 手动选择具体节点
+    // 不确定是否被墙的流量
     {
         ...groupBaseOption,
-        name: "手动选择",
+        name: "漏网之鱼",
         type: "select",
-        "include-all": true,
+        proxies: ["自动选择", "地区选择", "故障转移", "手动选择", "DIRECT"],
     },
-    // 负载均衡(轮询)
+    // 国内直连
     {
         ...groupBaseOption,
-        name: "负载均衡(轮询)",
-        type: "load-balance",
-        strategy: "round-robin",
-        "include-all": true,
+        name: "国内直连",
+        type: "select",
+        proxies: ["DIRECT", "REJECT"],
     },
-    // 负载均衡(散列)
+    // 自动选择（按延迟）
     {
         ...groupBaseOption,
-        name: "负载均衡(散列)",
-        type: "load-balance",
-        strategy: "consistent-hashing",
+        name: "自动选择",
+        type: "url-test",
+        interval: test_interval,
+        tolerance: test_tolerance,
         "include-all": true,
     },
     // 故障转移
@@ -389,20 +390,11 @@ const proxyGroups = [
         type: "fallback",
         "include-all": true,
     },
-    // 全局直连
+    // 手动选择
     {
         ...groupBaseOption,
-        name: "全局直连",
+        name: "手动选择",
         type: "select",
-        proxies: ["DIRECT", "REJECT"],
-    },
-    // 延迟选优
-    {
-        ...groupBaseOption,
-        name: "延迟选优",
-        type: "url-test",
-        interval: test_interval,
-        tolerance: test_tolerance,
         "include-all": true,
     },
 ];
@@ -528,23 +520,14 @@ function addRegions(config) {
     }
     if (regions.length === 0) return;
     const entries = config["proxy-groups"];
-    for (const entry of entries) {
-        if (!entry || !entry.proxies) continue;
-        // 将"地区选择"添加到"代理选择"组中
-        if (entry.name === "代理选择") {
-            if (entry.proxies.length > 1) {
-                entry.proxies.splice(2, 0, "地区选择");
-            }
-        }
-    }
-    if (entries.length > 0) {
-        entries.splice(1, 0, {
-            ...groupBaseOption,
-            name: "地区选择",
-            type: "select",
-            proxies: regions,
-        })
-    }
+    // 在"必须代理"和"漏网之鱼"的 proxies 中已有"地区选择"占位，无需再插入
+    // 添加"地区选择"组到 proxy-groups 中
+    entries.push({
+        ...groupBaseOption,
+        name: "地区选择",
+        type: "select",
+        proxies: regions,
+    });
     config["proxy-groups"] = entries;
 }
 
