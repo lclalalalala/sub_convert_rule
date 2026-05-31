@@ -41,36 +41,36 @@ const groupBaseOption = {
 const rules = [
     // 自定义规则
     ...customRules,
-    // 确定国内直连
-    "RULE-SET,ipdirect,国内直连,no-resolve",
-    "RULE-SET,ipprivate,国内直连,no-resolve",
-    "RULE-SET,direct,国内直连",
-    "RULE-SET,private,国内直连",
-    "RULE-SET,bilibili,国内直连",
-    "RULE-SET,speedtest,国内直连",
+    // 确定国内流量
+    "RULE-SET,ipdirect,国内流量,no-resolve",
+    "RULE-SET,ipprivate,国内流量,no-resolve",
+    "RULE-SET,direct,国内流量",
+    "RULE-SET,private,国内流量",
+    "RULE-SET,bilibili,国内流量",
+    "RULE-SET,speedtest,国内流量",
     // 确定被墙，需要代理
-    "RULE-SET,telegramcidr,必须代理,no-resolve",
-    "RULE-SET,google,必须代理",
-    "RULE-SET,youtube,必须代理",
-    "RULE-SET,ai,必须代理",
-    "RULE-SET,github,必须代理",
-    "RULE-SET,netflix_ip,必须代理",
-    "RULE-SET,netflix_site,必须代理",
-    "RULE-SET,tiktok,必须代理",
-    "RULE-SET,pornhub,必须代理",
-    "RULE-SET,proxy,必须代理",
-    "RULE-SET,gfw,必须代理",
-    "RULE-SET,tld-not-cn,必须代理",
+    "RULE-SET,telegramcidr,外网流量,no-resolve",
+    "RULE-SET,google,外网流量",
+    "RULE-SET,youtube,外网流量",
+    "RULE-SET,ai,外网流量",
+    "RULE-SET,github,外网流量",
+    "RULE-SET,netflix_ip,外网流量",
+    "RULE-SET,netflix_site,外网流量",
+    "RULE-SET,tiktok,外网流量",
+    "RULE-SET,pornhub,外网流量",
+    "RULE-SET,proxy,外网流量",
+    "RULE-SET,gfw,外网流量",
+    "RULE-SET,tld-not-cn,外网流量",
     // 不确定是否被墙
-    "RULE-SET,apple,漏网之鱼",
-    "RULE-SET,bing,漏网之鱼",
-    "RULE-SET,onedrive,漏网之鱼",
-    "RULE-SET,microsoft,漏网之鱼",
-    "RULE-SET,adobe,漏网之鱼",
-    "RULE-SET,spotify,漏网之鱼",
-    "RULE-SET,games,漏网之鱼",
+    "RULE-SET,apple,不确定内外网",
+    "RULE-SET,bing,不确定内外网",
+    "RULE-SET,onedrive,不确定内外网",
+    "RULE-SET,microsoft,不确定内外网",
+    "RULE-SET,adobe,不确定内外网",
+    "RULE-SET,spotify,不确定内外网",
+    "RULE-SET,games,不确定内外网",
     // 未匹配的规则归入不确定
-    "MATCH,漏网之鱼",
+    "MATCH,不确定内外网",
 ];
 
 // 规则集配置
@@ -356,21 +356,21 @@ const proxyGroups = [
     // 确定被墙的流量
     {
         ...groupBaseOption,
-        name: "必须代理",
+        name: "外网流量",
         type: "select",
-        proxies: ["自动选择", "地区选择", "故障转移", "手动选择", "DIRECT"],
+        proxies: ["自动选择", "指定地区服务器", "故障转移", "指定单一服务器", "DIRECT"],
     },
     // 不确定是否被墙的流量
     {
         ...groupBaseOption,
-        name: "漏网之鱼",
+        name: "不确定内外网",
         type: "select",
-        proxies: ["自动选择", "地区选择", "故障转移", "手动选择", "DIRECT"],
+        proxies: ["自动选择", "指定地区服务器", "故障转移", "指定单一服务器", "DIRECT"],
     },
-    // 国内直连
+    // 国内流量
     {
         ...groupBaseOption,
-        name: "国内直连",
+        name: "国内流量",
         type: "select",
         proxies: ["DIRECT", "REJECT"],
     },
@@ -390,10 +390,10 @@ const proxyGroups = [
         type: "fallback",
         "include-all": true,
     },
-    // 手动选择
+    // 指定单一服务器
     {
         ...groupBaseOption,
-        name: "手动选择",
+        name: "指定单一服务器",
         type: "select",
         "include-all": true,
     },
@@ -520,11 +520,11 @@ function addRegions(config) {
     }
     if (regions.length === 0) return;
     const entries = config["proxy-groups"];
-    // 在"必须代理"和"漏网之鱼"的 proxies 中已有"地区选择"占位，无需再插入
-    // 添加"地区选择"组到 proxy-groups 中
+    // 在"外网流量"和"不确定内外网"的 proxies 中已有"指定地区服务器"占位，无需再插入
+    // 添加"指定地区服务器"组到 proxy-groups 中
     entries.push({
         ...groupBaseOption,
-        name: "地区选择",
+        name: "指定地区服务器",
         type: "select",
         proxies: regions,
     });
