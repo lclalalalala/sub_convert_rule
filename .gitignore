@@ -6,6 +6,11 @@ subs.txt
 # C extensions
 *.so
 
+# dev env
+.claude
+.vscode
+.codegraph
+
 # Distribution / packaging
 .Python
 build/
